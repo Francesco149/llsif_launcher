@@ -15,12 +15,12 @@ anti-viruses might give you a false positive (although it's very unlikely).
 Requirements
 ==============
 Before you attempt using this tool, make sure you have the 
-[Visual C++ Redist 2013](http://www.microsoft.com/it-it/download/details.aspx?id=40784).
+[Visual C++ Redist 2013](http://www.microsoft.com/en-US/download/details.aspx?id=40784).
 Also, your emulator or device needs to be rooted.
 
 First time set-up
 ==============
-(you can ignore this if you already have xposed + rootcloak)
+(you can ignore this if you already have xposed + rootcloak and skip to WiFi ADB)
 * Install the Xposed Framework (version 2.4.1) on your device/emulator.
   Download [this apk](http://dl-xda.xposed.info/modules/de.robv.android.xposed.installer_v25_36cbbc.apk).
   If you're doing this on a real device, you need to simply install the apk.
