@@ -1,3 +1,6 @@
+![LLSIF Launcher](http://hnng.moe/f/sM)
+[Video demonstration](http://hnng.moe/f/sN)
+
 Introduction
 ==============
 This is a little tool I made for School Idol Festival (android version) 
