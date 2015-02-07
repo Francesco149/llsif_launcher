@@ -1,4 +1,5 @@
 ![LLSIF Launcher](http://hnng.moe/f/sM)
+
 [Video demonstration](http://hnng.moe/f/sN)
 
 Introduction
