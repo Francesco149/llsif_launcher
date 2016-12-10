@@ -43,9 +43,9 @@ void win32_show_error(const char *msg) {
 	LocalFree(gle_msg);
 }
 
-/* creates a window with the default background color and styles */
-HWND win32_make_window(const char *classname, const char *title, HINSTANCE inst,
-	WNDPROC wndproc, HICON icon, int w, int h, int cmdshow) {
+/* creates a child window with the default background color */
+HWND win32_make_child_window_ex(HWND parent, const char *classname, const char *title, HINSTANCE inst,
+	WNDPROC wndproc, HICON icon, int w, int h, int cmdshow, int exstyle, int style) {
 
 	WNDCLASSEXA wc = { 0 };
 	HWND wnd;
@@ -67,12 +67,12 @@ HWND win32_make_window(const char *classname, const char *title, HINSTANCE inst,
 	}
 
 	wnd = CreateWindowExA(
-		0,
+		exstyle,
 		classname,
 		title,
-		WS_OVERLAPPEDWINDOW,
+		style,
 		CW_USEDEFAULT, CW_USEDEFAULT,
-		w, h, NULL, NULL, inst, NULL);
+		w, h, parent, NULL, inst, NULL);
 
 	if (wnd == NULL) {
 		sprintf_s(buf, 128, "CreateWindowExA failed (%s)", classname);
@@ -89,9 +89,11 @@ HWND win32_make_window(const char *classname, const char *title, HINSTANCE inst,
 int win32_message_loop(HWND wnd) {
 	MSG msg;
 
-	while (GetMessage(&msg, wnd, 0, 0)) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+	while (GetMessageA(&msg, NULL, 0, 0)) {
+		if (!IsDialogMessageA(wnd, &msg)) {
+			TranslateMessage(&msg);
+			DispatchMessageA(&msg);
+		}
 	}
 
 	return msg.wParam;

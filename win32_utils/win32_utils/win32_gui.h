@@ -16,7 +16,10 @@
 #ifndef WIN32_GUI_H
 #define WIN32_GUI_H
 
-#include <windows.h>
+#include <Windows.h>
+#include <Windowsx.h>
+#include <commctrl.h>
+#pragma comment(lib, "ComCtl32.lib")
 
 /* manifest data that enables windows xp / 7 visual styles */
 #if defined _M_IX86
@@ -47,9 +50,24 @@
  */
 void win32_show_error(const char *msg);
 
-/* creates a window with the default background color and styles */
-HWND win32_make_window(const char *classname, const char *title, HINSTANCE inst,
-	WNDPROC wndproc, HICON icon, int w, int h, int cmdshow);
+/* creates a child window with the default background color */
+HWND win32_make_child_window_ex(HWND parent, const char *classname, const char *title, HINSTANCE inst,
+	WNDPROC wndproc, HICON icon, int w, int h, int cmdshow, int exstyle, int style);
+
+/* creates a window with the default background color */
+#define win32_make_window_ex(classname, title, inst, wndproc, icon, w, h, cmdshow, exstyle, style) \
+	win32_make_child_window_ex(NULL, classname, title, inst, wndproc, icon, w, h, cmdshow, exstyle, style)
+
+/* creates a window with the default background color and default extended style */
+#define win32_make_window_s(classname, title, inst, wndproc, icon, w, h, cmdshow, style) \
+	win32_make_window_ex(classname, title, inst, wndproc, icon, w, h, cmdshow, 0, style)
+
+/* 
+ * creates a window with the default background color, 
+ * default extended style and WS_OVERLAPPEDWINDOW style 
+ */
+#define win32_make_window(classname, title, inst, wndproc, icon, w, h, cmdshow) \
+	win32_make_window_s(classname, title, inst, wndproc, icon, w, h, cmdshow, WS_OVERLAPPEDWINDOW)
 
 /* runs a blocking win32 message loop and returns the last message's wparam */
 int win32_message_loop(HWND wnd);
@@ -92,28 +110,71 @@ HWND win32_make_control(HWND parent, int controlid, const char *class,
 	DWORD style, DWORD exstyle);
 
 /*
- * creates a single-line edit control with the default gui font.
+ * creates a static control with the default gui font.
+ * returns NULL and outputs an error to stdout with the given control name if unsucessful.
+ */
+#define win32_make_bitmap(parent, controlid, name, x, y, w, h) \
+	win32_make_control(parent, controlid, WC_STATICA, name, NULL, x, y, w, h, \
+		WS_VISIBLE | WS_CHILD | SS_BITMAP, 0)
+
+/*
+ * creates a static bitmap control.
+ * returns NULL and outputs an error to stdout with the given control name if unsucessful.
+ */
+#define win32_make_static(parent, controlid, name, text, x, y, w, h) \
+	win32_make_control(parent, controlid, WC_STATICA, name, text, x, y, w, h, \
+	WS_CHILD | WS_VISIBLE | SS_LEFT, 0)
+
+/* default edit control style */
+#define WS_EDIT_DEFAULT WS_TABSTOP | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL
+
+/*
+ * creates a single-line edit control with the default style and gui font.
  * returns NULL and outputs an error to stdout with the given control name if unsucessful.
  */
 #define win32_make_edit(parent, controlid, name, initialtext, x, y, w, h) \
-	win32_make_control(parent, controlid, "EDIT", name, initialtext, x, y, w, h, \
-	WS_TABSTOP | WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL, WS_EX_CLIENTEDGE)
+	win32_make_control(parent, controlid, WC_EDITA, name, initialtext, x, y, w, h, \
+		WS_EDIT_DEFAULT, WS_EX_CLIENTEDGE)
+
+/*
+ * creates a single-line edit control with the default gui font and the given styles.
+ * returns NULL and outputs an error to stdout with the given control name if unsucessful.
+ */
+#define win32_make_edit_s(parent, controlid, name, initialtext, x, y, w, h, style) \
+	win32_make_control(parent, controlid, WC_EDITA, name, initialtext, x, y, w, h, \
+	style, WS_EX_CLIENTEDGE)
 
 /*
  * creates a groupbox control with the default gui font.
  * returns NULL and outputs an error to stdout with the given control name if unsucessful.
  */
 #define win32_make_groupbox(parent, controlid, name, text, x, y, w, h) \
-	win32_make_control(parent, controlid, "BUTTON", name, text, x, y, w, h, \
-	WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 0)
+	win32_make_control(parent, controlid, WC_BUTTONA, name, text, x, y, w, h, \
+		WS_CHILD | WS_VISIBLE | BS_GROUPBOX, 0)
 
 /*
  * creates a pushbutton control with the default gui font.
  * returns NULL and outputs an error to stdout with the given control name if unsucessful.
  */
 #define win32_make_button(parent, controlid, name, text, x, y, w, h) \
-	win32_make_control(parent, controlid, "BUTTON", name, text, x, y, w, h, \
-	WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, 0)
+	win32_make_control(parent, controlid, WC_BUTTONA, name, text, x, y, w, h, \
+		WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, 0)
+
+/*
+ * creates a checkbox control with the default gui font.
+ * returns NULL and outputs an error to stdout with the given control name if unsucessful.
+ */
+#define win32_make_checkbox(parent, controlid, name, text, x, y, w, h) \
+	win32_make_control(parent, controlid, WC_BUTTONA, name, text, x, y, w, h, \
+		WS_TABSTOP | WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX, 0)
+
+/*
+ * creates a combobox control with the default gui font.
+ * returns NULL and outputs an error to stdout with the given control name if unsucessful.
+ */
+#define win32_make_combobox(parent, controlid, name, x, y, w, h) \
+	win32_make_control(parent, controlid, WC_COMBOBOXA, name, "", x, y, w, h, \
+		WS_TABSTOP | WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | CBS_HASSTRINGS, 0)
 
 /*
  * creates a listview control with the default gui font.
@@ -121,8 +182,8 @@ HWND win32_make_control(HWND parent, int controlid, const char *class,
  */
 #define win32_make_listview(parent, controlid, name, x, y, w, h) \
 	win32_make_control(parent, controlid, WC_LISTVIEW, name, "", x, y, w, h, \
-	WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_ALIGNLEFT | \
-	WS_BORDER | WS_TABSTOP, 0)
+		WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_ALIGNLEFT | \
+		WS_BORDER | WS_TABSTOP, 0)
 
 /* adds a column to a listview control */
 int win32_listview_add_column(HWND list, int index, const char *title, int width);

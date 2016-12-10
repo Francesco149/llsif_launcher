@@ -84,10 +84,6 @@ int adb_ls(const char *path, char *result, size_t result_maxlen) {
 	sprintf(buf, "adb shell \"su -c 'ls %s'\"", path);
 	os_shellexec(buf, result, result_maxlen);
 
-	if (strstr(result, ":") != NULL) {
-		return 0;
-	}
-
 	return 1;
 }
 
