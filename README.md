@@ -15,7 +15,8 @@ anti-viruses might give you a false positive (although it's very unlikely).
 Requirements
 ==============
 Before you attempt using this tool, make sure you have the 
-[Visual C++ Redist 2013](http://www.microsoft.com/en-US/download/details.aspx?id=40784).
+[Visual C++ Redist 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48145).
+If it still doesn't work, try [Visual C++ Redist 2013](http://www.microsoft.com/en-US/download/details.aspx?id=40784).
 Also, your emulator or device needs to be rooted.
 The program also relies on adb, but I have shipped adb with the binaries so it should be fine.
 
